@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-public class ProductApiRepository implements ProductRepository{
+public class CatalogApiRepository implements CatalogRepository {
 
     private WebClient client;
 
-    public ProductApiRepository() {
+    public CatalogApiRepository() {
         client = WebClient.create("https://fakestoreapi.com");
     }
 

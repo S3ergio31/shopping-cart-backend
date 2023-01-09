@@ -11,4 +11,5 @@ public class Product {
     private Category category;
     private String image;
     private Rating rating;
+
 }
