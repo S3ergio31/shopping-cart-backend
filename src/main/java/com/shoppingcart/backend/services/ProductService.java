@@ -2,6 +2,7 @@ package com.shoppingcart.backend.services;
 
 import com.google.common.reflect.TypeToken;
 import com.shoppingcart.backend.domain.Product;
+import com.shoppingcart.backend.domain.Rating;
 import com.shoppingcart.backend.entities.ProductEntity;
 import com.shoppingcart.backend.repositories.ProductRepository;
 import org.modelmapper.ModelMapper;
@@ -24,16 +25,13 @@ public class ProductService {
         return modelMapper.map(products, listType);
     }
     public Product find(Long id){
-        Optional<ProductEntity> product = productRepository.findById(id);
-        modelMapper.addMappings(
-            src -> src.getRate(),
-            (dest, v) -> dest.getRating().setRate(v)
-        );
-        modelMapper.addMappings(
-            src -> src.getCount(),
-            (dest, v) -> dest.getRating().setCount(v)
-        );
-        return modelMapper.map(product, Product.class);
+        Optional<ProductEntity> productEntity = productRepository.findById(id);
+        Product product = modelMapper.map(productEntity, Product.class);
+        Rating rating = new Rating();
+        rating.setCount(productEntity.get().getCount());
+        rating.setRate(productEntity.get().getRate());
+        product.setRating(rating);
+        return product;
     }
     public boolean existsByTitle(String title){
         return productRepository.existsByTitle(title);
