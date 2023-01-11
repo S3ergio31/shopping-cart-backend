@@ -2,6 +2,7 @@ package com.shoppingcart.backend.configurations;
 
 import com.shoppingcart.backend.domain.Category;
 import com.shoppingcart.backend.domain.Product;
+import com.shoppingcart.backend.exceptions.CategoryNotFound;
 import com.shoppingcart.backend.services.CatalogService;
 import com.shoppingcart.backend.services.CategoryService;
 import com.shoppingcart.backend.services.ProductService;
@@ -28,16 +29,20 @@ public class ImportCategoriesAndProducts {
 
     @Bean
     public void importCategories(){
-        log.info("Importing categories...");
-        catalogService.getCategories().stream().forEach(this::createCategory);
-        log.info("Importing categories finished.");
+        if(!categoryService.all().iterator().hasNext()) {
+            log.info("Importing categories...");
+            catalogService.getCategories().stream().forEach(this::createCategory);
+            log.info("Importing categories finished.");
+        }
     }
 
     @Bean
     public void importProducts(){
-        log.info("Importing products...");
-        catalogService.getProducts().stream().forEach(this::createProduct);
-        log.info("Importing products finished.");
+        if(!productService.all().iterator().hasNext()){
+            log.info("Importing products...");
+            catalogService.getProducts().stream().forEach(this::createProduct);
+            log.info("Importing products finished.");
+        }
     }
 
     private void createCategory(Category category){
@@ -53,7 +58,11 @@ public class ImportCategoriesAndProducts {
             Category category = categoryService.findByName(product.getCategory().getName());
             product.setId(null);
             product.getCategory().setId(category.getId());
-            productService.upsert(product);
+            try {
+                productService.upsert(product);
+            } catch (CategoryNotFound e) {
+                log.info(e.getMessage());
+            }
         }
     }
 }
