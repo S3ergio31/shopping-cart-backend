@@ -8,7 +8,7 @@ public class Category {
 
     private Long id;
 
-    private Category(){}
+    public Category(){}
 
     public Category(String name) {
         this.name = name;

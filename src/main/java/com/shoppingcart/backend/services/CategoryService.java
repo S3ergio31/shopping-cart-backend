@@ -3,14 +3,13 @@ package com.shoppingcart.backend.services;
 import com.google.common.reflect.TypeToken;
 import com.shoppingcart.backend.domain.Category;
 import com.shoppingcart.backend.entities.CategoryEntity;
+import com.shoppingcart.backend.exceptions.CategoryNotFound;
 import com.shoppingcart.backend.repositories.CategoryRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoryService {
@@ -27,8 +26,11 @@ public class CategoryService {
         return modelMapper.map(categories, listType);
     }
 
-    public Category find(Long id){
-        Optional<CategoryEntity> category = categoryRepository.findById(id);
+    public Category find(Long id) throws CategoryNotFound{
+        CategoryEntity category =
+        categoryRepository.findById(id).orElseThrow(
+                () -> new CategoryNotFound(id)
+        );
         return modelMapper.map(category, Category.class);
     }
 
@@ -42,10 +44,10 @@ public class CategoryService {
     }
 
     public Category upsert(Category category) {
-        CategoryEntity CategoryEntity = categoryRepository.save(
+        CategoryEntity categoryEntity = categoryRepository.save(
             modelMapper.map(category, CategoryEntity.class)
         );
-        return modelMapper.map(CategoryEntity, Category.class);
+        return modelMapper.map(categoryEntity, Category.class);
     }
 
     public void delete(Long id) {
