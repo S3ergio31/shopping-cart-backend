@@ -21,6 +21,7 @@ public class ProductService {
     private ProductRepository productRepository;
     @Autowired
     private ModelMapper modelMapper;
+
     public Iterable<Product> all(){
         Iterable<ProductEntity> products = productRepository.findAll();
         Type listType = new TypeToken<List<ProductEntity>>() {}.getType();

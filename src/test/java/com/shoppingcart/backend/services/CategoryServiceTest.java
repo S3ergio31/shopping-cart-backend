@@ -4,6 +4,7 @@ import com.google.common.collect.Iterables;
 import com.shoppingcart.backend.entities.CategoryEntity;
 import com.shoppingcart.backend.exceptions.CategoryNotFound;
 import com.shoppingcart.backend.repositories.CategoryRepository;
+import com.shoppingcart.backend.utils.CategoryTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 import com.shoppingcart.backend.domain.Category;
 import org.mockito.Spy;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -32,28 +32,27 @@ public class CategoryServiceTest {
     @Spy
     private ModelMapper modelMapper;
 
-    private CategoryEntity categoryEntity;
+    private Category category;
+
+    private CategoryTestUtil categoryTestUtil;
 
     @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        categoryEntity = new CategoryEntity();
-        categoryEntity.setId(1L);
-        categoryEntity.setName("test");
+        categoryTestUtil = new CategoryTestUtil();
+        category = categoryTestUtil.getCategory();
     }
 
-    private final void assertCategory(Category category){
-        assertNotNull(category);
-        assertEquals(1L, category.getId());
-        assertEquals("test", category.getName());
+    private CategoryEntity getCategoryEntity(){
+        return new ModelMapper().map(category, CategoryEntity.class);
     }
 
     @Test
     public final void testFind() throws CategoryNotFound {
-        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(categoryEntity));
-        Category category = categoryService.find(1L);
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(getCategoryEntity()));
+        Category foundCategory = categoryService.find(1L);
         verify(categoryRepository, times(1)).findById(anyLong());
-        assertCategory(category);
+        categoryTestUtil.assertCategory(category, foundCategory);
     }
 
     @Test
@@ -69,7 +68,7 @@ public class CategoryServiceTest {
 
     @Test
     public final void testGetAllCategories(){
-        when(categoryRepository.findAll()).thenReturn(Arrays.asList(categoryEntity));
+        when(categoryRepository.findAll()).thenReturn(Arrays.asList(getCategoryEntity()));
         Iterable<Category> categories = categoryService.all();
         verify(categoryRepository, times(1)).findAll();
         assertEquals(1, Iterables.size(categories));
@@ -99,18 +98,18 @@ public class CategoryServiceTest {
 
     @Test
     public final void testFindByName(){
-        when(categoryRepository.findByName(anyString())).thenReturn(categoryEntity);
-        Category category = categoryService.findByName("test");
+        when(categoryRepository.findByName(anyString())).thenReturn(getCategoryEntity());
+        Category foundCategory = categoryService.findByName("test");
         verify(categoryRepository, times(1)).findByName(anyString());
-        assertCategory(category);
+        categoryTestUtil.assertCategory(category, foundCategory);
     }
 
     @Test
     public final void testUpsert(){
-        when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(categoryEntity);
-        Category category = categoryService.upsert(new Category());
+        when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(getCategoryEntity());
+        Category foundCategory = categoryService.upsert(new Category());
         verify(categoryRepository, times(1)).save(any(CategoryEntity.class));
-        assertCategory(category);
+        categoryTestUtil.assertCategory(category, foundCategory);
     }
 
     @Test
