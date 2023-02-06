@@ -48,8 +48,8 @@ public class ProductServiceTest {
 
     private ProductEntity getProductEntity(){
         ProductEntity productEntity = new ModelMapper().map(product, ProductEntity.class);
-        productEntity.setRate(product.getRating().getRate());
-        productEntity.setCount(product.getRating().getCount());
+        productEntity.setRate(product.getRate());
+        productEntity.setCount(product.getCount());
         return productEntity;
     }
 

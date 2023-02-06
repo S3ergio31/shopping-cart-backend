@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class ProductRequest {
+    private Long id;
     @NotEmpty(message = "product title cannot be null")
     private String title;
 
@@ -23,6 +24,9 @@ public class ProductRequest {
     @URL(message = "product image must be a url")
     private String image;
 
-    @NotNull(message = "product rating cannot be null")
-    private RatingRequest rating;
+    @NotNull(message = "rating rate cannot be null")
+    private Double rate;
+
+    @NotNull(message = "rating count cannot be null")
+    private Integer count;
 }

@@ -10,6 +10,7 @@ public class Product {
     private String description;
     private Category category;
     private String image;
-    private Rating rating;
+    private Double rate;
+    private Integer count;
 
 }
