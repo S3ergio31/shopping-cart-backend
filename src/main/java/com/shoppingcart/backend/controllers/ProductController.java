@@ -5,6 +5,7 @@ import com.shoppingcart.backend.exceptions.CategoryNotFound;
 import com.shoppingcart.backend.exceptions.ProductNotFound;
 import com.shoppingcart.backend.requests.ProductRequest;
 import com.shoppingcart.backend.services.ProductService;
+import io.swagger.annotations.Api;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("products")
+@Api(tags={"Products"})
 public class ProductController {
     @Autowired
     private ProductService productService;
