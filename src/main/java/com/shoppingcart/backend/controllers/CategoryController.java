@@ -29,7 +29,7 @@ public class CategoryController {
     }
 
     @PutMapping
-    public Category upsert(@Valid @RequestBody CategoryRequest categoryRequest) throws CategoryNotFound {
+    public Category upsert(@RequestBody @Valid CategoryRequest categoryRequest) throws CategoryNotFound {
         Category category = modelMapper.map(categoryRequest, Category.class);
         return categoryService.upsert(category);
     }

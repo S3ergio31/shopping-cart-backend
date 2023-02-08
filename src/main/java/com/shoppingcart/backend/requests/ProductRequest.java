@@ -8,25 +8,25 @@ import javax.validation.constraints.NotNull;
 @Data
 public class ProductRequest {
     private Long id;
-    @NotEmpty(message = "product title cannot be null")
+    @NotEmpty(message = "Product title cannot be empty")
     private String title;
 
-    @NotNull(message = "product price cannot be null")
+    @NotNull(message = "Product price cannot be empty")
     private Double price;
 
-    @NotEmpty(message = "product description cannot be null")
+    @NotEmpty(message = "Product description cannot be empty")
     private String description;
 
-    @NotNull(message = "product category cannot be null")
+    @NotNull(message = "Product category cannot be empty")
     private CategoryRequest category;
 
-    @NotEmpty(message = "product image cannot be null")
-    @URL(message = "product image must be a url")
+    @NotEmpty(message = "Product image cannot be empty")
+    @URL(message = "Product image must be a url")
     private String image;
 
-    @NotNull(message = "rating rate cannot be null")
+    @NotNull(message = "Product rate cannot be empty")
     private Double rate;
 
-    @NotNull(message = "rating count cannot be null")
+    @NotNull(message = "Product count cannot be empty")
     private Integer count;
 }
