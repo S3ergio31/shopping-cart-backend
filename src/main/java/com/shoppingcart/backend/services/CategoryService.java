@@ -5,14 +5,16 @@ import com.shoppingcart.backend.domain.Category;
 import com.shoppingcart.backend.entities.CategoryEntity;
 import com.shoppingcart.backend.exceptions.CategoryNotFound;
 import com.shoppingcart.backend.repositories.CategoryRepository;
+import com.shoppingcart.backend.validations.UniqueSource;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.lang.reflect.Type;
 import java.util.List;
 
 @Service
-public class CategoryService {
+public class CategoryService implements UniqueSource {
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -27,11 +29,14 @@ public class CategoryService {
     }
 
     public Category find(Long id) throws CategoryNotFound{
-        CategoryEntity category =
-        categoryRepository.findById(id).orElseThrow(
-                () -> new CategoryNotFound(id)
-        );
+        CategoryEntity category = findOrFail(id);
         return modelMapper.map(category, Category.class);
+    }
+
+    private CategoryEntity findOrFail(Long id) throws CategoryNotFound{
+        return categoryRepository.findById(id).orElseThrow(
+            () -> new CategoryNotFound(id)
+        );
     }
 
     public boolean existsByName(String name){
@@ -50,7 +55,13 @@ public class CategoryService {
         return modelMapper.map(categoryEntity, Category.class);
     }
 
-    public void delete(Long id) {
-        categoryRepository.deleteById(id);
+    public void delete(Long id) throws CategoryNotFound {
+        CategoryEntity category = findOrFail(id);
+        categoryRepository.delete(category);
+    }
+
+    @Override
+    public boolean isUnique(String field) {
+        return !existsByName(field);
     }
 }

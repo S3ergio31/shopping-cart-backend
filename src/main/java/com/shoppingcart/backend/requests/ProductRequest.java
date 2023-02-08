@@ -2,6 +2,8 @@ package com.shoppingcart.backend.requests;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
+
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -25,8 +27,10 @@ public class ProductRequest {
     private String image;
 
     @NotNull(message = "Product rate cannot be empty")
+    @Min(0)
     private Double rate;
 
     @NotNull(message = "Product count cannot be empty")
+    @Min(0)
     private Integer count;
 }

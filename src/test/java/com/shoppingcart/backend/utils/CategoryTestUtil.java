@@ -1,6 +1,7 @@
 package com.shoppingcart.backend.utils;
 
 import com.shoppingcart.backend.domain.Category;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

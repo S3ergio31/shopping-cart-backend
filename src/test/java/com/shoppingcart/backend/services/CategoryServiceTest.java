@@ -1,6 +1,7 @@
 package com.shoppingcart.backend.services;
 
 import com.google.common.collect.Iterables;
+import com.shoppingcart.backend.domain.Category;
 import com.shoppingcart.backend.entities.CategoryEntity;
 import com.shoppingcart.backend.exceptions.CategoryNotFound;
 import com.shoppingcart.backend.repositories.CategoryRepository;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import com.shoppingcart.backend.domain.Category;
 import org.mockito.Spy;
 import org.modelmapper.ModelMapper;
 
@@ -19,7 +19,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 public class CategoryServiceTest {
@@ -114,7 +113,23 @@ public class CategoryServiceTest {
 
     @Test
     public final void testDelete(){
-        categoryService.delete(1L);
-        verify(categoryRepository, times(1)).deleteById(anyLong());
+        when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(getCategoryEntity()));
+        doNothing().when(categoryRepository).delete(any(CategoryEntity.class));
+        try {
+            categoryService.delete(1L);
+        } catch (CategoryNotFound e) {
+            throw new RuntimeException(e);
+        }
+        verify(categoryRepository, times(1)).delete(any(CategoryEntity.class));
     }
+
+    @Test
+    public void testCategoryNotFoundOnDelete(){
+        Throwable exception = assertThrows(
+            CategoryNotFound.class,
+            () ->  categoryService.delete(1L)
+        );
+        assertEquals("Category with id=1 not found", exception.getMessage());
+    }
+
 }

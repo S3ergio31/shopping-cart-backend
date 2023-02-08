@@ -23,10 +23,13 @@ public class CatalogApiRepository implements CatalogRepository {
                 .get()
                 .uri("products")
                 .retrieve()
-                .bodyToFlux(Product.class)
+                .bodyToFlux(FakeStoreProduct.class)
                 .collect(Collectors.toList())
                 .share()
-                .block();
+                .block()
+                .stream()
+                .map(fakeStoreProduct -> (Product) fakeStoreProduct)
+                .collect(Collectors.toList());
     }
 
     @Override
