@@ -1,4 +1,4 @@
-package com.shoppingcart.backend.configurations;
+package com.shoppingcart.backend.seeders;
 
 import com.shoppingcart.backend.domain.Category;
 import com.shoppingcart.backend.domain.Product;
@@ -10,9 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 @Slf4j
 public class ImportCategoriesAndProducts {
 

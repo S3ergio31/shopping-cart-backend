@@ -17,4 +17,9 @@ public class BackendApplication {
 		return new ModelMapper();
 	}
 
+	@Bean
+	public AppContext appContext() {
+		return new AppContext();
+	}
+
 }
