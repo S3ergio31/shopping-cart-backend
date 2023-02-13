@@ -3,6 +3,7 @@ package com.shoppingcart.backend.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -18,6 +19,7 @@ public class SecurityConfig {
     private AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
+    @Order(1)
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception{
         http
             .cors()
@@ -26,12 +28,12 @@ public class SecurityConfig {
             .headers().frameOptions().disable()
             .and()
             .authorizeRequests()
-            .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**", "/swagger-ui.html", "/webjars/**")
-            .permitAll()
-            .antMatchers(HttpMethod.GET, "/products", "/categories")
-            .permitAll()
-            .anyRequest()
-            .authenticated()
+                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**", "/swagger-ui.html", "/webjars/**")
+                .permitAll()
+
+                .antMatchers(HttpMethod.GET, "/products", "/categories")
+                .permitAll()
+            .anyRequest().authenticated()
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -40,11 +42,28 @@ public class SecurityConfig {
         return http.build();
     }
 
+    @Order(2)
+    @Bean SecurityFilterChain configureAuthorizationFilter(HttpSecurity http) throws Exception {
+        http.addFilter(getAuthorizationFilter())
+            .authorizeRequests()
+                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**", "/swagger-ui.html", "/webjars/**")
+                .permitAll()
+                .antMatchers(HttpMethod.GET, "/products", "/categories")
+                .permitAll();
+        return http.build();
+    }
+
     private AuthenticationFilter getAuthenticationFilter() throws Exception{
         AuthenticationFilter filter = new AuthenticationFilter(
             authenticationManager()
         );
         filter.setFilterProcessesUrl("/users/login");
+        return filter;
+    }
+
+    private AuthenticationFilter getAuthorizationFilter() throws Exception{
+        AuthenticationFilter filter = new AuthenticationFilter(authenticationManager());
+        //filter.setFilterProcessesUrl("");
         return filter;
     }
 
