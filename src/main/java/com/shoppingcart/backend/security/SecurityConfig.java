@@ -19,7 +19,6 @@ public class SecurityConfig {
     private AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
-    @Order(1)
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception{
         http
             .cors()
@@ -31,25 +30,15 @@ public class SecurityConfig {
                 .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**", "/swagger-ui.html", "/webjars/**")
                 .permitAll()
 
-                .antMatchers(HttpMethod.GET, "/products", "/categories")
+                .antMatchers(HttpMethod.GET, "/products/**", "/categories")
                 .permitAll()
             .anyRequest().authenticated()
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            .addFilter(getAuthenticationFilter());
-        return http.build();
-    }
-
-    @Order(2)
-    @Bean SecurityFilterChain configureAuthorizationFilter(HttpSecurity http) throws Exception {
-        http.addFilter(getAuthorizationFilter())
-            .authorizeRequests()
-                .antMatchers("/v2/api-docs", "/configuration/ui", "/swagger-resources/**", "/configuration/**", "/swagger-ui.html", "/webjars/**")
-                .permitAll()
-                .antMatchers(HttpMethod.GET, "/products", "/categories")
-                .permitAll();
+            .addFilter(getAuthenticationFilter())
+            .addFilter(getAuthorizationFilter());
         return http.build();
     }
 
@@ -61,9 +50,8 @@ public class SecurityConfig {
         return filter;
     }
 
-    private AuthenticationFilter getAuthorizationFilter() throws Exception{
-        AuthenticationFilter filter = new AuthenticationFilter(authenticationManager());
-        //filter.setFilterProcessesUrl("");
+    private AuthorizationFilter getAuthorizationFilter() throws Exception{
+        AuthorizationFilter filter = new AuthorizationFilter(authenticationManager());
         return filter;
     }
 

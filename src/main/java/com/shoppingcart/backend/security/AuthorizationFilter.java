@@ -14,12 +14,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
-
     private Jwt jwt;
 
     public AuthorizationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
         this.jwt = new Jwt();
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return
+            (request.getMethod().equals("POST") && request.getRequestURI().contains("/users/login")) ||
+            (request.getMethod().equals("GET") && (request.getRequestURI().contains("/categories") || request.getRequestURI().contains("/products")));
     }
 
     @Override
@@ -35,10 +41,10 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private String getUserFromToken(HttpServletRequest request){
-        String token =request.getHeader("Authorization");
+        String token = request.getHeader("Authorization");
         String bearerPrefix = "Bearer ";
 
-        if(token == null || token.startsWith(bearerPrefix)){
+        if(token == null || !token.startsWith(bearerPrefix)){
             throw new JwtException("Token not found");
         }
 
